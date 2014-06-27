@@ -5,7 +5,19 @@
 
 namespace Token {
     enum Token {
-        
+        Start = -1,
+        Name,
+        Number,
+        Keyword,
+        Dot = '.',
+        LParen = '(',
+        RParen = ')',
+        LBracket = '{',
+        RBracket = '}',
+        Equals,
+        NotEquals,
+        GreaterThan = '>',
+        LesserThan = '<',
     };
 }
 
@@ -30,6 +42,12 @@ int main(int argc, char *argv[]) {
         default:
             std::cerr<<"error: invalid arguments."<< std::endl;
             return 0;
+    }
+
+    Token::Token CurrentToken = Token::Start;
+
+    while(*Stream) {
+        CurrentToken = Lex(Stream);
     }
 
     if(Stream != &std::cin) {

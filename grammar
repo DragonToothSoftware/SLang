@@ -14,7 +14,7 @@ statementList :: statement ";" statementList
                | Null
 
 statement :: "import" importList
-           | expression
+           | relational
            | modifier varList
            | NAME "(" argList ")"
            | "prototype" NAME
@@ -24,28 +24,28 @@ importList :: NAME
             | NAME "as" NAME
             | NAME "." NAME "as" NAME
 
+relational :: expression
+             | relational "==" expression
+             | relational "!=" expression
+             | relational "<" expression
+             | relational ">" expression
+             | relational "<=" expression
+             | relational "and" expression
+             | relational "or" expression
+
 expression :: term
             | expression "+" term
             | expression "-" term
 
-term :: conditional
-      | term "*" conditional
-      | term "/" conditional
-
-conditional :: primary
-             | conditional "==" primary
-             | conditional "!=" primary
-             | conditional "<" primary
-             | conditional ">" primary
-             | conditional "<=" primary
-             | conditional "and" primary
-             | conditional "or" primary
+term :: primary
+      | term "*" primary
+      | term "/" primary
 
 primary :: datatype
          | NAME
-		 | NAME "=" expression
+		 | NAME "=" relational
          | NAME "=" "None"
-         | "(" expression ")"
+         | "(" relational ")"
          | "-" primary
          | "+" primary
 
