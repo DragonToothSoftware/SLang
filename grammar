@@ -1,0 +1,112 @@
+NAME    : [_a-zA-Z][_a-zA-Z0-9]*
+NUMBER  : [0-9]+
+FLOAT   : (([0-9]*\.[0-9]+)|([0-9]+\.))
+STRING  : ("|')([^\r\n])*?[^\\]\1
+BOOLEAN : (0|1)
+
+======================================
+
+start :: statementList
+       | function
+
+statementList :: statement ";" statementList
+               | statement ";"
+               | Null
+
+statement :: "import" importList
+           | expression
+           | modifier varList
+           | NAME "(" argList ")"
+           | "prototype" NAME
+
+importList :: NAME
+            | NAME "." NAME
+            | NAME "as" NAME
+            | NAME "." NAME "as" NAME
+
+expression :: term
+            | expression "+" term
+            | expression "-" term
+
+term :: conditional
+      | term "*" conditional
+      | term "/" conditional
+
+conditional :: primary
+             | conditional "==" primary
+             | conditional "!=" primary
+             | conditional "<" primary
+             | conditional ">" primary
+             | conditional "<=" primary
+             | conditional "and" primary
+             | conditional "or" primary
+
+primary :: datatype
+         | NAME
+		 | NAME "=" expression
+         | NAME "=" "None"
+         | "(" expression ")"
+         | "-" primary
+         | "+" primary
+
+datatype :: NUMBER
+          | FLOAT
+          | STRING
+          | BOOLEAN
+
+modifier :: "var"
+          | "static"
+          | "const"
+          | "extern"
+
+varList :: variable "," varList
+         | variable
+
+variable :: NAME
+          | NAME "=" expression
+          | NAME "=" "{" valueList "}"
+          | NAME "=" "(" valueList ")"
+          | NAME "=" "{" key-map "}"
+
+valueList :: value "," valueList
+           | value
+           | Null
+
+value :: datatype
+       | NAME
+
+key-map :: key ":" value "," key-map
+         | key ":" value
+         | Null
+
+key :: datatype
+     | NAME
+
+argList :: "var" variable "," argList
+         | "var" variable
+
+function :: "function" NAME "(" modifier varList ")" "{" block "}"
+
+block :: block block
+       | statementList
+       | loopBlock
+       | flowControl
+
+loopBlock :: whileBlock
+           | forBlock
+           | foreachBlock
+
+whileBlock :: "do" "{" block "}" "while" "(" expression ")" ";"
+            | "while" "(" expression ")" "{" block "}"
+
+forBlock :: "for" "(" expressionList ";" expression ";" expression ")" "{" block "}"
+
+foreachBlock :: "foreach" "(" NAME "as" NAME ")" "{" block "}"
+
+flowControl :: "if" "(" expression ")" "{" block "}" elif
+
+elif :: "elif" "(" expression ")" "{" block "}" else
+      | Null
+
+else :: "else" "{" block "}"
+      | Null
