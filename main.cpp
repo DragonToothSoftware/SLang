@@ -147,8 +147,8 @@ Token::Token getToken(std::istream *Stream) {
         case '6':
         case '7':
         case '8':
-        case '9':
-            std::string NumberStr = Current;
+        case '9': {
+            std::string NumberStr(1, Current);
 
             while((Current = Stream->get()) && (isdigit(Current))) {
                 NumberStr += Current;
@@ -167,9 +167,10 @@ Token::Token getToken(std::istream *Stream) {
             Stream->putback(Current);
             NumberValue = toFloat(NumberStr);
             return Token::Float;
+        }
 
         case '\"':
-        case '\'':
+        case '\'': {
             char Start = Current;
             StringValue = "";
 
@@ -178,10 +179,11 @@ Token::Token getToken(std::istream *Stream) {
             } while((Current = Stream->get()) && Current != Start);
 
             StringValue += Current;
+        }
 
-        default:
+        default: {
             if(isalpha(Current) || Current == '_') {
-                std::string Temp = Current;
+                std::string Temp (1, Current);
 
                 while((Current = Stream->get()) && (isalnum(Current) || Current == '_')) {
                     Temp += Current;
@@ -197,6 +199,7 @@ Token::Token getToken(std::istream *Stream) {
                 NameValue = Temp;
                 return isKeyword(Temp) ? Token::Keyword : Token::Name;
             }
+        }
     }
 }
 
