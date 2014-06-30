@@ -2,7 +2,7 @@ NAME    : [_a-zA-Z][_a-zA-Z0-9]*
 NUMBER  : [0-9]+
 FLOAT   : (([0-9]*\.[0-9]+)|([0-9]+\.))
 STRING  : ("|')([^\r\n])*?[^\\]\1
-BOOLEAN : (0|1)
+BOOLEAN : (True|False)
 
 ======================================
 
@@ -30,6 +30,7 @@ relational :: expression
              | relational "<" expression
              | relational ">" expression
              | relational "<=" expression
+             | relational ">=" expression
              | relational "and" expression
              | relational "or" expression
 
@@ -43,6 +44,7 @@ term :: primary
 
 primary :: datatype
          | NAME
+         | "!" NAME
 		 | NAME "=" relational
          | NAME "=" "None"
          | "(" relational ")"
@@ -64,7 +66,7 @@ varList :: variable "," varList
 
 variable :: NAME
           | NAME "=" expression
-          | NAME "=" "{" valueList "}"
+          | NAME "=" "[" valueList "]"
           | NAME "=" "(" valueList ")"
           | NAME "=" "{" key-map "}"
 
