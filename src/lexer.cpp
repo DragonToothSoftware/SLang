@@ -23,22 +23,10 @@ Token::Token getToken(std::istream *Stream) {
     } while(isspace(Current));
 
     switch(Current) {
-        case '=':
-            return (Stream->peek() == '=' ? Token::Equals : Token::Assign);
-
-        case '!':
-            return (Stream->peek() == '=' ? Token::NotEquals : Token::Not);
-
-        case '<':
-            return (Stream->peek() == '=' ? Token::LesserThanEquals : Token::LesserThan);
-
-        case '>':
-            if(Stream->peek() == '=') {
-                Stream->get();
-                return Token::GreaterThanEquals;
-            }
-
-            return Token::GreaterThan;
+        case '=': return (Stream->peek() == '=' ? Stream->get(), Token::Equals            : Token::Assign);
+        case '!': return (Stream->peek() == '=' ? Stream->get(), Token::NotEquals         : Token::Not);
+        case '<': return (Stream->peek() == '=' ? Stream->get(), Token::LesserThanEquals  : Token::LesserThan);
+        case '>': return (Stream->peek() == '=' ? Stream->get(), Token::GreaterThanEquals : Token::GreaterThan);
 
         case '(': case '[': case '{':
         case ')': case ']': case '}':
