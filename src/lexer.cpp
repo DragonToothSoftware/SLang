@@ -11,8 +11,7 @@ namespace {
     std::string NameValue   = "",
                 StringValue = "",
                 BoolValue   = "";
-         double FloatValue  = 0.0;
-            int NumberValue = 0;
+         double NumberValue = 0.0;
 }
 
 Token::Token getToken(std::istream *Stream) {
@@ -31,32 +30,35 @@ Token::Token getToken(std::istream *Stream) {
         case '(': case '[': case '{': case ')':
         case ']': case '}': case '+': case '-':
         case '*': case '/': case ',': case ';':
-        case ':':
+        case ':': case '.':
             return Token::Token(Current);
 
-        case '.': case '0': case '1': case '2':
-        case '3': case '4': case '5': case '6':
-        case '7': case '8': case '9': {
+        case '0': case '1': case '2': case '3':
+        case '4': case '5': case '6': case '7':
+        case '8': case '9': {
             std::string NumberStr(1, Current);
 
-            while((Current = Stream->get()) && (isdigit(Current))) {
-                NumberStr += Current;
-            }
-
-            if(Current != '.') {
-                NumberValue = std::stoi(NumberStr);
-                Stream->putback(Current);
-                return Token::Number;
-            }
-
-            do {
-                NumberStr += Current;
-            } while((Current = Stream->get()) && isdigit(Current));
-
-            Stream->putback(Current);
-            NumberValue = std::stod(NumberStr);
-            return Token::Float;
+            std::for_each(
+                Stream->str().begin(),
+                Stream->str().end(), 
+                [Stream, NumberStr](const char &Next) {
+                    (isdigit(Next) || Next == '.') ? NumberStr += Next, Stream->get() : break;
+                }
+            );
         }
+
+
+
+
+
+
+
+
+
+
+
+
+
 
         case '\"': case '\'': {
             char Start = Current;
