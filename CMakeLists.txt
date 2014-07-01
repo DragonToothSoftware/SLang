@@ -6,6 +6,6 @@ include_directories(src)
 
 add_definitions(-std=c++11)
 
-set(SOURCES src/main.cpp src/lexer.cpp include/lexer.hpp)
+file(GLOB SOURCES "include/*.hpp" "src/*.cpp")
 
 add_executable(build/slang ${SOURCES})
