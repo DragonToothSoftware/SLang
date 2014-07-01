@@ -28,17 +28,15 @@ Token::Token getToken(std::istream *Stream) {
         case '<': return (Stream->peek() == '=' ? Stream->get(), Token::LesserThanEquals  : Token::LesserThan);
         case '>': return (Stream->peek() == '=' ? Stream->get(), Token::GreaterThanEquals : Token::GreaterThan);
 
-        case '(': case '[': case '{':
-        case ')': case ']': case '}':
-        case '+': case '-': case '*':
-        case '/': case ',': case ';':
+        case '(': case '[': case '{': case ')':
+        case ']': case '}': case '+': case '-':
+        case '*': case '/': case ',': case ';':
         case ':':
             return Token::Token(Current);
 
-        case '.': case '0': case '1':
-        case '2': case '3': case '4':
-        case '5': case '6': case '7':
-        case '8': case '9': {
+        case '.': case '0': case '1': case '2':
+        case '3': case '4': case '5': case '6':
+        case '7': case '8': case '9': {
             std::string NumberStr(1, Current);
 
             while((Current = Stream->get()) && (isdigit(Current))) {
