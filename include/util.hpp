@@ -4,7 +4,7 @@
 #include <functional>
 
 namespace utility {
-    template<typename T, typename I> void forEachDigit(T, T, std::function<void(I)>);
+    template<typename T, typename U, typename V> void forEachDigit(T, T, std::function<U(V)>);
 }
 
 namespace util = utility;

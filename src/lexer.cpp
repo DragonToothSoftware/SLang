@@ -53,18 +53,6 @@ Token::Token getToken(std::istream *Stream) {
             return Token::Number;
         }
 
-
-
-
-
-
-
-
-
-
-
-
-
         case '\"': case '\'': {
             char Start = Current;
             StringValue = "";
