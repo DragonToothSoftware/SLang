@@ -30,12 +30,7 @@ Token::Token getToken(std::istream *Stream) {
             return (Stream->peek() == '=' ? Token::NotEquals : Token::Not);
 
         case '<':
-            if(Stream->peek() == '=') {
-                Stream->get();
-                return Token::LesserThanEquals;
-            }
-
-            return Token::LesserThan;
+            return (Stream->peek() == '=' ? Token::LesserThanEquals : Token::LesserThan);
 
         case '>':
             if(Stream->peek() == '=') {
