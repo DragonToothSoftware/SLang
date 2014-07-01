@@ -16,7 +16,7 @@ namespace {
 }
 
 Token::Token getToken(std::istream *Stream) {
-    char Current = 0;
+    static char Current = 0;
 
     do {
         Current = Stream->get();
@@ -24,20 +24,10 @@ Token::Token getToken(std::istream *Stream) {
 
     switch(Current) {
         case '=':
-            if(Stream->peek() == '=') {
-                Stream->get();
-                return Token::Equals;
-            }
-
-            return Token::Assign;
+            return (Stream->peek() == '=' ? Token::Equals : Token::Assign);
 
         case '!':
-            if(Stream->peek() == '=') {
-                Stream->get();
-                return Token::NotEquals;
-            }
-
-            return Token::Not;
+            return (Stream->peek() == '=' ? Token::NotEquals : Token::Not);
 
         case '<':
             if(Stream->peek() == '=') {
