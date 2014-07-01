@@ -6,6 +6,8 @@
 #include  <iterator>
 #include    <cctype>
 
+#include <util.hpp>
+
 bool isKeyword(const std::string&);
 
 namespace {
@@ -39,13 +41,16 @@ Token::Token getToken(std::istream *Stream) {
         case '8': case '9': {
             std::string NumberStr(1, Current);
 
-            for(auto Next : *Stream) {
-                if(!isdigit(Next) || Next != '.') {
-                    break;
-                }
+            util::forEachDigit(
+                                std::istream_iterator<char>(*Stream),
+                                std::istream_iterator<char>(),
+                                [Stream, &NumberStr] (const char &Next) {
+                                    NumberStr += Next;
+                                }
+            );
 
-                NumberStr += Next;
-            }
+            NumberValue = stod(NumberStr);
+            return Token::Number;
         }
 
 
