@@ -3,6 +3,7 @@
 #include    <string>
 #include    <vector>
 #include <algorithm>
+#include  <iterator>
 #include    <cctype>
 
 bool isKeyword(const std::string&);
@@ -38,15 +39,14 @@ Token::Token getToken(std::istream *Stream) {
         case '8': case '9': {
             std::string NumberStr(1, Current);
 
-            std::for_each(
-                Stream->str().begin(),
-                Stream->str().end(), 
-                [Stream, NumberStr](const char &Next) {
-                    (isdigit(Next) || Next == '.') ? NumberStr += Next, Stream->get() : break;
+            for(auto Next : *Stream) {
+                if(!isdigit(Next) || Next != '.') {
+                    break;
                 }
-            );
-        }
 
+                NumberStr += Next;
+            }
+        }
 
 
 
