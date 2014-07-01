@@ -16,56 +16,27 @@ namespace {
 }
 
 Token::Token getToken(std::istream *Stream) {
-    char Current = 0;
+    static char Current = 0;
 
     do {
         Current = Stream->get();
     } while(isspace(Current));
 
     switch(Current) {
-        case '=':
-            if(Stream->peek() == '=') {
-                Stream->get();
-                return Token::Equals;
-            }
+        case '=': return (Stream->peek() == '=' ? Stream->get(), Token::Equals            : Token::Assign);
+        case '!': return (Stream->peek() == '=' ? Stream->get(), Token::NotEquals         : Token::Not);
+        case '<': return (Stream->peek() == '=' ? Stream->get(), Token::LesserThanEquals  : Token::LesserThan);
+        case '>': return (Stream->peek() == '=' ? Stream->get(), Token::GreaterThanEquals : Token::GreaterThan);
 
-            return Token::Assign;
-
-        case '!':
-            if(Stream->peek() == '=') {
-                Stream->get();
-                return Token::NotEquals;
-            }
-
-            return Token::Not;
-
-        case '<':
-            if(Stream->peek() == '=') {
-                Stream->get();
-                return Token::LesserThanEquals;
-            }
-
-            return Token::LesserThan;
-
-        case '>':
-            if(Stream->peek() == '=') {
-                Stream->get();
-                return Token::GreaterThanEquals;
-            }
-
-            return Token::GreaterThan;
-
-        case '(': case '[': case '{':
-        case ')': case ']': case '}':
-        case '+': case '-': case '*':
-        case '/': case ',': case ';':
+        case '(': case '[': case '{': case ')':
+        case ']': case '}': case '+': case '-':
+        case '*': case '/': case ',': case ';':
         case ':':
             return Token::Token(Current);
 
-        case '.': case '0': case '1':
-        case '2': case '3': case '4':
-        case '5': case '6': case '7':
-        case '8': case '9': {
+        case '.': case '0': case '1': case '2':
+        case '3': case '4': case '5': case '6':
+        case '7': case '8': case '9': {
             std::string NumberStr(1, Current);
 
             while((Current = Stream->get()) && (isdigit(Current))) {
