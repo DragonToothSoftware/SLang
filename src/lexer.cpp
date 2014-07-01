@@ -1,0 +1,132 @@
+#include <lexer.hpp>
+
+#include    <string>
+#include    <vector>
+#include <algorithm>
+#include    <cctype>
+
+bool isKeyword(const std::string&);
+
+namespace {
+    std::string NameValue   = "",
+                StringValue = "",
+                BoolValue   = "";
+         double FloatValue  = 0.0;
+            int NumberValue = 0;
+}
+
+Token::Token getToken(std::istream *Stream) {
+    char Current = 0;
+
+    do {
+        Current = Stream->get();
+    } while(isspace(Current));
+
+    switch(Current) {
+        case '=':
+            if(Stream->peek() == '=') {
+                Stream->get();
+                return Token::Equals;
+            }
+
+            return Token::Assign;
+
+        case '!':
+            if(Stream->peek() == '=') {
+                Stream->get();
+                return Token::NotEquals;
+            }
+
+            return Token::Not;
+
+        case '<':
+            if(Stream->peek() == '=') {
+                Stream->get();
+                return Token::LesserThanEquals;
+            }
+
+            return Token::LesserThan;
+
+        case '>':
+            if(Stream->peek() == '=') {
+                Stream->get();
+                return Token::GreaterThanEquals;
+            }
+
+            return Token::GreaterThan;
+
+        case '(': case '[': case '{':
+        case ')': case ']': case '}':
+        case '+': case '-': case '*':
+        case '/': case ',': case ';':
+        case ':':
+            return Token::Token(Current);
+
+        case '.': case '0': case '1':
+        case '2': case '3': case '4':
+        case '5': case '6': case '7':
+        case '8': case '9': {
+            std::string NumberStr(1, Current);
+
+            while((Current = Stream->get()) && (isdigit(Current))) {
+                NumberStr += Current;
+            }
+
+            if(Current != '.') {
+                NumberValue = std::stoi(NumberStr);
+                Stream->putback(Current);
+                return Token::Number;
+            }
+
+            do {
+                NumberStr += Current;
+            } while((Current = Stream->get()) && isdigit(Current));
+
+            Stream->putback(Current);
+            NumberValue = std::stod(NumberStr);
+            return Token::Float;
+        }
+
+        case '\"': case '\'': {
+            char Start = Current;
+            StringValue = "";
+
+            do {
+                StringValue += Current;
+            } while((Current = Stream->get()) && Current != Start);
+
+            StringValue += Current;
+        }
+
+        default: {
+            if(isalpha(Current) || Current == '_') {
+                std::string Temp (1, Current);
+
+                while((Current = Stream->get()) && (isalnum(Current) || Current == '_')) {
+                    Temp += Current;
+                }
+
+                Stream->putback(Current);
+
+                if(Temp == "True" || Temp == "False") {
+                    BoolValue = Temp;
+                    return Token::Boolean;
+                }
+
+                NameValue = Temp;
+                return isKeyword(Temp) ? Token::Keyword : Token::Name;
+            }
+        }
+    }
+}
+
+bool isKeyword(const std::string &Word) {
+    const static std::vector<std::string> Keywords {
+        "and", "as", "const", "do", "elif", "else",
+        "extern", "for", "foreach", "function", "if",
+        "import", "or", "prototype", "static", "var",
+        "while"
+    };
+
+    return std::binary_search(Keywords.begin(), Keywords.end(), Word);
+}
