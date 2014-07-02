@@ -44,7 +44,7 @@ Token::Token getToken(std::istream *Stream) {
             util::forEachDigit(
                                 std::istream_iterator<char>(*Stream),
                                 std::istream_iterator<char>(),
-                                [Stream, &NumberStr] (const char &Next) {
+                                [Stream, &NumberStr] (const char &Next) -> void {
                                     NumberStr += Next;
                                 }
             );

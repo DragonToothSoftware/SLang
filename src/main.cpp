@@ -31,7 +31,6 @@ int main(int argc, char *argv[]) {
 
     while(*Stream) {
         CurrentToken = getToken(Stream);
-        std::cout<< CurrentToken <<' '<< char(CurrentToken) << std::endl;
     }
 
     if(Stream != &std::cin) {
