@@ -16,11 +16,4 @@ namespace Token {
 
 Token::Token getToken(std::istream*);
 
-namespace {
-    std::string NameValue   = "",
-                StringValue = "",
-                BoolValue   = "";
-         double NumberValue = 0.0;
-}
-
 #endif
