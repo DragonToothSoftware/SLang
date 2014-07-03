@@ -3,7 +3,10 @@
 #include    <string>
 #include    <vector>
 #include <algorithm>
+#include  <iterator>
 #include    <cctype>
+
+#include <util.hpp>
 
 bool isKeyword(const std::string&);
 
@@ -11,8 +14,7 @@ namespace {
     std::string NameValue   = "",
                 StringValue = "",
                 BoolValue   = "";
-         double FloatValue  = 0.0;
-            int NumberValue = 0;
+         double NumberValue = 0.0;
 }
 
 Token::Token getToken(std::istream *Stream) {
@@ -31,31 +33,24 @@ Token::Token getToken(std::istream *Stream) {
         case '(': case '[': case '{': case ')':
         case ']': case '}': case '+': case '-':
         case '*': case '/': case ',': case ';':
-        case ':':
+        case ':': case '.':
             return Token::Token(Current);
 
-        case '.': case '0': case '1': case '2':
-        case '3': case '4': case '5': case '6':
-        case '7': case '8': case '9': {
+        case '0': case '1': case '2': case '3':
+        case '4': case '5': case '6': case '7':
+        case '8': case '9': {
             std::string NumberStr(1, Current);
 
-            while((Current = Stream->get()) && (isdigit(Current))) {
-                NumberStr += Current;
-            }
+            util::forEachDigit(
+                                std::istream_iterator<char>(*Stream),
+                                std::istream_iterator<char>(),
+                                [Stream, &NumberStr] (const char &Next) -> void {
+                                    NumberStr += Next;
+                                }
+            );
 
-            if(Current != '.') {
-                NumberValue = std::stoi(NumberStr);
-                Stream->putback(Current);
-                return Token::Number;
-            }
-
-            do {
-                NumberStr += Current;
-            } while((Current = Stream->get()) && isdigit(Current));
-
-            Stream->putback(Current);
-            NumberValue = std::stod(NumberStr);
-            return Token::Float;
+            NumberValue = stod(NumberStr);
+            return Token::Number;
         }
 
         case '\"': case '\'': {
