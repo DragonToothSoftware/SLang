@@ -6,15 +6,14 @@
 #include  <iterator>
 #include    <cctype>
 
-#include <util.hpp>
-
 bool isKeyword(const std::string&);
 
 namespace {
-    std::string NameValue   = "",
-                StringValue = "",
-                BoolValue   = "";
-         double NumberValue = 0.0;
+    std::string NameValue    = "",
+                KeywordValue = "",
+                StringValue  = "",
+                BoolValue    = "";
+         double NumberValue  = 0.0;
 }
 
 Token::Token getToken(std::istream *Stream) {
@@ -36,19 +35,14 @@ Token::Token getToken(std::istream *Stream) {
         case ':': case '.':
             return Token::Token(Current);
 
-        case '0': case '1': case '2': case '3':
-        case '4': case '5': case '6': case '7':
-        case '8': case '9': {
-            std::string NumberStr(1, Current);
+        case '0' ... '9': {
+            std::string NumberStr;
 
-            util::forEachDigit(
-                                std::istream_iterator<char>(*Stream),
-                                std::istream_iterator<char>(),
-                                [Stream, &NumberStr] (const char &Next) -> void {
-                                    NumberStr += Next;
-                                }
-            );
+            do {
+                NumberStr += Current;
+            } while(((Current = Stream->get()) == '.') || (isdigit(Current)));
 
+            Stream->putback(Current);
             NumberValue = stod(NumberStr);
             return Token::Number;
         }
@@ -79,8 +73,13 @@ Token::Token getToken(std::istream *Stream) {
                     return Token::Boolean;
                 }
 
+                if(isKeyword(Temp)) {
+                    KeywordValue = Temp;
+                    return Token::Keyword;
+                }
+
                 NameValue = Temp;
-                return isKeyword(Temp) ? Token::Keyword : Token::Name;
+                return Token::Name;
             }
         }
     }
@@ -95,4 +94,15 @@ bool isKeyword(const std::string &Word) {
     };
 
     return std::binary_search(Keywords.begin(), Keywords.end(), Word);
+}
+
+#include <iostream>
+
+void lex_debug() {
+    std::cout<<"Name Value: "<< NameValue << std::endl
+             <<"Keyword Value: "<< KeywordValue << std::endl
+             <<"String Value: "<< StringValue << std::endl
+             <<"Bool Value: "<< BoolValue << std::endl
+             <<"Number Value: "<< NumberValue << std::endl
+             <<"--------------------------------------------------------------------------------"<< std::endl;
 }

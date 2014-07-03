@@ -15,5 +15,6 @@ namespace Token {
 }
 
 Token::Token getToken(std::istream*);
+void lex_debug();
 
 #endif
