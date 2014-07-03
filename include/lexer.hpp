@@ -1,6 +1,70 @@
 #ifndef _ROOT_INCLUDE_LEXER_HPP
 #define _ROOT_INCLUDE_LEXER_HPP
 
+namespace LexicalAnalyzer {
+}
+
+namespace lex = LexicalAnalyzer;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 #include <istream>
 
 namespace Token {
