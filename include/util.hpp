@@ -9,6 +9,8 @@ namespace Utility {
     class Any;
 
     bool isKeyword(const std::string&);
+    void clear();
+    void pause();
 }
 
 namespace util = Utility;

@@ -1,5 +1,7 @@
 #ifndef _ROOT_INCLUDE_UTIL_ANY_HPP
 #define _ROOT_INCLUDE_UTIL_ANY_HPP
+
+namespace Utility {
 #include <type_traits>
 #include <utility>
 #include <typeinfo>
@@ -139,3 +141,6 @@ private:
 
     Base* ptr;
 };
+}
+
+#endif
