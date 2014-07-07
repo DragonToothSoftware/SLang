@@ -4,7 +4,7 @@
 #include <istream>
 
 namespace Token {
-    enum Token {
+    enum Lexeme {
         Start = -2, Eof,
         Name, Keyword, String, Boolean, Number,
         LParen = '(', LBrace = '{', LBracket = '[', RParen = ')', RBrace = '}', RBracket = ']',
@@ -14,7 +14,7 @@ namespace Token {
     };
 }
 
-Token::Token getToken(std::istream*);
+Token::Lexeme getToken(std::istream*);
 void lex_debug();
 
 #endif

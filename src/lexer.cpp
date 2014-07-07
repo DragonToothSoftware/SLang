@@ -2,9 +2,10 @@
 
 #include    <string>
 #include    <vector>
-#include <algorithm>
 #include  <iterator>
 #include    <cctype>
+
+#include <util.hpp>
 
 bool isKeyword(const std::string&);
 
@@ -16,7 +17,7 @@ namespace {
          double NumberValue  = 0.0;
 }
 
-Token::Token getToken(std::istream *Stream) {
+Token::Lexeme getToken(std::istream* Stream) {
     static char Current = 0;
 
     do {
@@ -73,7 +74,7 @@ Token::Token getToken(std::istream *Stream) {
                     return Token::Boolean;
                 }
 
-                if(isKeyword(Temp)) {
+                if(util::isKeyword(Temp)) {
                     KeywordValue = Temp;
                     return Token::Keyword;
                 }
@@ -83,17 +84,6 @@ Token::Token getToken(std::istream *Stream) {
             }
         }
     }
-}
-
-bool isKeyword(const std::string &Word) {
-    const static std::vector<std::string> Keywords {
-        "and", "as", "const", "do", "elif", "else",
-        "extern", "for", "foreach", "function", "if",
-        "import", "or", "prototype", "static", "var",
-        "while"
-    };
-
-    return std::binary_search(Keywords.begin(), Keywords.end(), Word);
 }
 
 #include <iostream>

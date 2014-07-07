@@ -7,8 +7,7 @@
 #include <lexer.hpp>
 
 int main(int argc, char *argv[]) {
-    static std::istream *Stream;
-
+    std::istream* Stream;
     std::vector<std::string> Arguments(argv, argv + argc);
 
     switch(argc) {
@@ -31,14 +30,10 @@ int main(int argc, char *argv[]) {
             return 0;
     }
 
-    Token::Token CurrentToken = Token::Start;
+    Token::Lexeme CurrentToken = Token::Start;
 
     while(*Stream) {
         CurrentToken = getToken(Stream);
         lex_debug();
-    }
-
-    if(Stream != &std::cin) {
-        delete Stream;
     }
 }
