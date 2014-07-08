@@ -27,7 +27,7 @@ namespace Token {
                     Value(_Value),
                     LineNumber(_LineNumber),
                     LineColumn(_LineColumn) {}
-    }
+    };
 }
 
 #endif

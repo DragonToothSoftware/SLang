@@ -36,4 +36,10 @@ int main(int argc, char *argv[]) {
         CurrentToken = getToken(Stream);
         lex_debug();
     }
+
+    if(Stream != &cin) {
+        delete Stream;
+    }
+
+    return 0;
 }

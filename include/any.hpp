@@ -1,13 +1,14 @@
 #ifndef _ROOT_INCLUDE_UTIL_ANY_HPP
 #define _ROOT_INCLUDE_UTIL_ANY_HPP
 
-namespace Utility {
 #include <type_traits>
 #include <utility>
 #include <typeinfo>
 #include <string>
 #include <cassert>
 
+
+namespace Utility {
 using namespace std;
 
 template<class T>

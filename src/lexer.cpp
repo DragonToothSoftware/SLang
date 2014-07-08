@@ -34,7 +34,7 @@ Token::Lexeme getToken(std::istream* Stream) {
         case ']': case '}': case '+': case '-':
         case '*': case '/': case ',': case ';':
         case ':': case '.':
-            return Token::Token(Current);
+            return Token::Lexeme(Current);
 
         case '0' ... '9': {
             std::string NumberStr;
