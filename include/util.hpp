@@ -10,7 +10,7 @@ namespace Utility {
 
     bool isKeyword(const std::string&);
     void clear();
-    void pause();
+//    void pause();
 }
 
 namespace util = Utility;

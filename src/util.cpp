@@ -15,10 +15,16 @@ namespace Utility {
         return std::binary_search(Keywords.begin(), Keywords.end(), Word);
     }
 
+#ifdef _WIN32
+    #include <windows.h>
+
+#else
+    #include <unistd.h>
+    #include<term.h>
+#endif
+
     void clear() {
     #ifdef _WIN32
-        #include <windows.h>
-
         HANDLE                     hStdOut;
         CONSOLE_SCREEN_BUFFER_INFO csbi;
         DWORD                      count;
@@ -37,9 +43,6 @@ namespace Utility {
         SetConsoleCursorPosition( hStdOut, homeCoords );
 
     #else
-        #include <unistd.h>
-        #include <term.h>
-
         if(!cur_term) {
             int result;
             setupterm( NULL, STDOUT_FILENO, &result );

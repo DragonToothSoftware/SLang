@@ -37,7 +37,7 @@ int main(int argc, char *argv[]) {
         lex_debug();
     }
 
-    if(Stream != &cin) {
+    if(Stream != &std::cin) {
         delete Stream;
     }
 
