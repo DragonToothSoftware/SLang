@@ -7,7 +7,7 @@
 
 #include <util.hpp>
 
-bool isKeyword(const std::string&);
+char getChar(std::istream*);
 
 namespace {
     std::string NameValue    = "",
@@ -15,13 +15,15 @@ namespace {
                 StringValue  = "",
                 BoolValue    = "";
          double NumberValue  = 0.0;
+         long   LineNumber   = 0,
+                LineColumn   = 0;
 }
 
-Token::Lexeme getToken(std::istream* Stream) {
+Token::Lexeme getToken(std::istream *Stream) {
     static char Current = 0;
 
     do {
-        Current = Stream->get();
+        Current = getChar(Stream);
     } while(isspace(Current));
 
     switch(Current) {
@@ -41,7 +43,7 @@ Token::Lexeme getToken(std::istream* Stream) {
 
             do {
                 NumberStr += Current;
-            } while(((Current = Stream->get()) == '.') || (isdigit(Current)));
+            } while(((Current = getChar(Stream)) == '.') || (isdigit(Current)));
 
             Stream->putback(Current);
             NumberValue = stod(NumberStr);
@@ -54,7 +56,7 @@ Token::Lexeme getToken(std::istream* Stream) {
 
             do {
                 StringValue += Current;
-            } while((Current = Stream->get()) && Current != Start);
+            } while((Current = getChar(Stream)) && Current != Start);
 
             StringValue += Current;
         }
@@ -63,7 +65,7 @@ Token::Lexeme getToken(std::istream* Stream) {
             if(isalpha(Current) || Current == '_') {
                 std::string Temp (1, Current);
 
-                while((Current = Stream->get()) && (isalnum(Current) || Current == '_')) {
+                while((Current = getChar(Stream)) && (isalnum(Current) || Current == '_')) {
                     Temp += Current;
                 }
 
@@ -74,7 +76,7 @@ Token::Lexeme getToken(std::istream* Stream) {
                     return Token::Boolean;
                 }
 
-                if(util::isKeyword(Temp)) {
+                else if(util::isKeyword(Temp)) {
                     KeywordValue = Temp;
                     return Token::Keyword;
                 }
@@ -86,6 +88,21 @@ Token::Lexeme getToken(std::istream* Stream) {
     }
 }
 
+char getChar(std::istream *Stream) {
+    char Current = Stream->get();
+
+    if(Current == '\n' || Current == '\r') {
+        LineColumn = 0;
+        LineNumber++;
+    }
+
+    else {
+        LineColumn++;
+    }
+
+    return Current;
+}
+
 #include <iostream>
 
 void lex_debug() {
@@ -94,5 +111,6 @@ void lex_debug() {
              <<"String Value: "<< StringValue << std::endl
              <<"Bool Value: "<< BoolValue << std::endl
              <<"Number Value: "<< NumberValue << std::endl
+             <<"Line Number/Column: "<< LineNumber <<"/"<< LineColumn << std::endl
              <<"--------------------------------------------------------------------------------"<< std::endl;
 }

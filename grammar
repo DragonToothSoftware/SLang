@@ -18,6 +18,8 @@ statement :: "import" importList
            | modifier varList
            | NAME "(" argList ")"
            | "prototype" NAME
+           | "pause"
+           | "clear"
 
 importList :: NAME
             | NAME "." NAME

@@ -7,7 +7,7 @@
 #include <lexer.hpp>
 
 int main(int argc, char *argv[]) {
-    std::istream* Stream;
+    std::istream *Stream;
     std::vector<std::string> Arguments(argv, argv + argc);
 
     switch(argc) {
