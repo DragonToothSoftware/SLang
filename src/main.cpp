@@ -14,8 +14,6 @@ int main(int argc, char *argv[]) {
     while(Lexer) {
         CurrentToken = Lexer.getLexeme();
         std::cout<< Lexer << std::endl;
-        util::pause();
-        util::clear();
     }
     return 0;
 }

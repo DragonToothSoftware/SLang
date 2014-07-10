@@ -11,7 +11,7 @@ namespace Token {
         Start = -2, Eof,
         Name, Keyword, String, Boolean, Number,
         LParen = '(', LBrace = '{', LBracket = '[', RParen = ')', RBrace = '}', RBracket = ']',
-        Not = '!', Equals, NotEquals, GreaterThan = '>', LesserThan = '<', GreaterThanEquals, LesserThanEquals,
+        Not = '!', Equals = 6, NotEquals, GreaterThan = '>', LesserThan = '<', GreaterThanEquals = 8, LesserThanEquals,
         Plus = '+', Minus = '-', Mult = '*', Div = '/', Assign = '=',
         Comma = ',', End = ';', Colon = ':', Dot = '.',
     };
@@ -26,7 +26,7 @@ namespace LexicalAnalyzer {
                             StringValue  = "",
                             BoolValue    = "";
                    double   NumberValue  = 0.0;
-                   long     LineNumber   = 0,
+                   long     LineNumber   = 1,
                             LineColumn   = 0;
             Token::Lexeme   CachedValue  = Token::Start;
                    bool     NeedsPrompt  = false;
@@ -53,6 +53,7 @@ namespace LexicalAnalyzer {
     typedef LexicalAnalyzer lexer;
 }
 
+std::ostream& operator<<(std::ostream&, const Token::Lexeme&);
 std::ostream& operator<<(std::ostream&, const LexicalAnalyzer::LexicalAnalyzer&);
 
 namespace lexer = LexicalAnalyzer;

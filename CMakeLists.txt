@@ -5,7 +5,7 @@ include_directories(include)
 include_directories(src)
 
 add_definitions(-std=c++11)
-add_definitions(-Wfatal-errors)
+#add_definitions(-Wfatal-errors)
 
 file(GLOB SOURCES "include/*.hpp" "src/*.cpp")
 

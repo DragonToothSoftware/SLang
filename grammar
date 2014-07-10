@@ -110,6 +110,7 @@ foreachBlock :: "foreach" "(" NAME "as" NAME ")" "{" block "}"
 flowControl :: "if" "(" expression ")" "{" block "}" elif
 
 elif :: "elif" "(" expression ")" "{" block "}" else
+      | "else if" "(" expression ")" "{" block "}" else
       | Null
 
 else :: "else" "{" block "}"

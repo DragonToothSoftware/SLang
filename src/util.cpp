@@ -62,7 +62,7 @@ namespace Utility {
 
         hstdin = GetStdHandle(STD_INPUT_HANDLE);
 
-        if(hstdin == INVALID_HANDLE_VALUE || !GetConsoleMode(hstdin, &mode) || !SetConsoleMode(hstdin, 0)) return 0;
+        if(hstdin == INVALID_HANDLE_VALUE || !GetConsoleMode(hstdin, &mode) || !SetConsoleMode(hstdin, 0)) return;
  
         WriteConsole(GetStdHandle(STD_OUTPUT_HANDLE),  Prompt.c_str(), lstrlen(Prompt.c_str()), &count, NULL);
         FlushConsoleInputBuffer( hstdin );
@@ -70,7 +70,6 @@ namespace Utility {
         do ReadConsoleInput(hstdin, &inrec, 1, &count); while ((inrec.EventType != KEY_EVENT) || inrec.Event.KeyEvent.bKeyDown);
 
         SetConsoleMode(hstdin, mode);
-        return inrec.Event.KeyEvent.wVirtualKeyCode;
 
     #else
         struct termios initial_settings;
