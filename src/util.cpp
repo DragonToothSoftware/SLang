@@ -2,16 +2,13 @@
 
 #include    <vector>
 #include <algorithm>
-
 #ifdef _WIN32
-    #include <windows.h>
-
+#include <windows.h>
 #else
-    #include <iostream>
-    #include <unistd.h>
-    #include <term.h>
-    #include <stdio.h>
-    #include <termios.h>
+#include   <stdio.h>
+#include  <unistd.h>
+#include    <term.h>
+#include <termios.h>
 #endif
 
 namespace Utility {
@@ -26,7 +23,7 @@ namespace Utility {
         return std::binary_search(Keywords.begin(), Keywords.end(), Word);
     }
 
-    void uclear() {
+    void clear() {
     #ifdef _WIN32
         HANDLE                     hStdOut;
         CONSOLE_SCREEN_BUFFER_INFO csbi;
@@ -56,7 +53,7 @@ namespace Utility {
     #endif
     }
 
-    void upause(const std::string &Prompt) {
+    void pause(const std::string &Prompt) {
     #ifdef _WIN32
         DWORD        mode;
         HANDLE       hstdin;
@@ -90,7 +87,7 @@ namespace Utility {
         settings.c_lflag &= ~(ECHO | ICANON);
         tcsetattr(STDIN_FILENO, TCSANOW, &settings);
 
-        std::cout<< Prompt << std::endl;
+        printf("%s", Prompt.c_str());
         count = read(0, (void*)keycodes, 18);
 
         tcsetattr(STDIN_FILENO, TCSANOW, &initial_settings);
