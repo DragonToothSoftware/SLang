@@ -56,7 +56,7 @@ namespace Utility {
     #endif
     }
 
-    void upause(std::string Prompt) {
+    void upause(const std::string &Prompt) {
     #ifdef _WIN32
         DWORD        mode;
         HANDLE       hstdin;

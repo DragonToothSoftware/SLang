@@ -7,7 +7,7 @@
 
 namespace LexicalAnalyzer {
     char LexicalAnalyzer::getChar() {
-        char Current = this->Stream->get();
+        char Current = this->Stream.get();
 
         if(Current == '\n' || Current == '\r') {
             this->LineColumn = 0;
@@ -22,14 +22,11 @@ namespace LexicalAnalyzer {
     }
 
     void LexicalAnalyzer::putBack(char Current) {
-        --LineColumn != 0 ? this->Stream->putback(Current) : this->Stream->putback(Current), this->LineNumber--;
+        --LineColumn != 0 ? this->Stream.putback(Current) : this->Stream.putback(Current), this->LineNumber--;
     }
 
-    LexicalAnalyzer::LexicalAnalyzer(std::istream *stream)
-        : Stream(stream) {
-    }
-
-    LexicalAnalyzer::~LexicalAnalyzer() {
+    void LexicalAnalyzer::set(std::istream &&stream) {
+        this->Stream = stream;
     }
 
     Token::Lexeme LexicalAnalyzer::getLexeme() {
@@ -40,10 +37,10 @@ namespace LexicalAnalyzer {
         } while(isspace(Current));
 
         switch(Current) {
-            case '=': return (this->Stream->peek() == '=' ? this->getChar(), this->CachedValue = Token::Equals            : this->CachedValue = Token::Assign);
-            case '!': return (this->Stream->peek() == '=' ? this->getChar(), this->CachedValue = Token::NotEquals         : this->CachedValue = Token::Not);
-            case '<': return (this->Stream->peek() == '=' ? this->getChar(), this->CachedValue = Token::LesserThanEquals  : this->CachedValue = Token::LesserThan);
-            case '>': return (this->Stream->peek() == '=' ? this->getChar(), this->CachedValue = Token::GreaterThanEquals : this->CachedValue = Token::GreaterThan);
+            case '=': return (this->Stream.peek() == '=' ? this->getChar(), this->CachedValue = Token::Equals            : this->CachedValue = Token::Assign);
+            case '!': return (this->Stream.peek() == '=' ? this->getChar(), this->CachedValue = Token::NotEquals         : this->CachedValue = Token::Not);
+            case '<': return (this->Stream.peek() == '=' ? this->getChar(), this->CachedValue = Token::LesserThanEquals  : this->CachedValue = Token::LesserThan);
+            case '>': return (this->Stream.peek() == '=' ? this->getChar(), this->CachedValue = Token::GreaterThanEquals : this->CachedValue = Token::GreaterThan);
 
             case '(': case '[': case '{': case ')':
             case ']': case '}': case '+': case '-':
@@ -131,11 +128,11 @@ namespace LexicalAnalyzer {
     }
 
     LexicalAnalyzer::operator bool() const {
-        return this->Stream->good();
+        return this->Stream.good();
     }
 }
 
-std::ostream& operator<<(std::ostream& Out, LexicalAnalyzer::LexicalAnalyzer &Lexer) {
+std::ostream& operator<<(std::ostream& Out, const LexicalAnalyzer::LexicalAnalyzer &Lexer) {
     static bool Shown = false;
 
     if(!Shown) {

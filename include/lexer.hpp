@@ -20,22 +20,23 @@ namespace Token {
 namespace LexicalAnalyzer {
     class LexicalAnalyzer {
         private:
-            std  ::istream *Stream;
-            std  ::string   NameValue    = "",
-                            KeywordValue = "",
-                            StringValue  = "",
-                            BoolValue    = "";
-                   double   NumberValue  = 0.0;
-                   long     LineNumber   = 0,
-                            LineColumn   = 0;
-            Token::Lexeme   CachedValue  = Token::Start;
+            std  ::istream Stream;
+            std  ::string  NameValue    = "",
+                           KeywordValue = "",
+                           StringValue  = "",
+                           BoolValue    = "";
+                   double  NumberValue  = 0.0;
+                   long    LineNumber   = 0,
+                           LineColumn   = 0;
+            Token::Lexeme  CachedValue  = Token::Start;
 
             char getChar();
             void putBack(char);
 
         public:
-             LexicalAnalyzer(std::istream*);
-            ~LexicalAnalyzer();
+            ~LexicalAnalyzer() = default;
+
+            void set(std::istream&&);
 
             Token::Lexeme          getLexeme  ();
             std  ::string          getName    () const;
