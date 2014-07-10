@@ -1,116 +1,148 @@
 #include <lexer.hpp>
 
-#include    <string>
 #include    <vector>
-#include  <iterator>
 #include    <cctype>
 
 #include <util.hpp>
 
-char getChar(std::istream*);
+namespace LexicalAnalyzer {
+    char LexicalAnalyzer::getChar() {
+        char Current = this->Stream->get();
 
-namespace {
-    std::string NameValue    = "",
-                KeywordValue = "",
-                StringValue  = "",
-                BoolValue    = "";
-         double NumberValue  = 0.0;
-         long   LineNumber   = 0,
-                LineColumn   = 0;
-}
-
-Token::Lexeme getToken(std::istream *Stream) {
-    static char Current = 0;
-
-    do {
-        Current = getChar(Stream);
-    } while(isspace(Current));
-
-    switch(Current) {
-        case '=': return (Stream->peek() == '=' ? Stream->get(), Token::Equals            : Token::Assign);
-        case '!': return (Stream->peek() == '=' ? Stream->get(), Token::NotEquals         : Token::Not);
-        case '<': return (Stream->peek() == '=' ? Stream->get(), Token::LesserThanEquals  : Token::LesserThan);
-        case '>': return (Stream->peek() == '=' ? Stream->get(), Token::GreaterThanEquals : Token::GreaterThan);
-
-        case '(': case '[': case '{': case ')':
-        case ']': case '}': case '+': case '-':
-        case '*': case '/': case ',': case ';':
-        case ':': case '.':
-            return Token::Lexeme(Current);
-
-        case '0' ... '9': {
-            std::string NumberStr;
-
-            do {
-                NumberStr += Current;
-            } while(((Current = getChar(Stream)) == '.') || (isdigit(Current)));
-
-            Stream->putback(Current);
-            NumberValue = stod(NumberStr);
-            return Token::Number;
+        if(Current == '\n' || Current == '\r') {
+            this->LineColumn = 0;
+            this->LineNumber++;
         }
 
-        case '\"': case '\'': {
-            char Start = Current;
-            StringValue = "";
-
-            do {
-                StringValue += Current;
-            } while((Current = getChar(Stream)) && Current != Start);
-
-            StringValue += Current;
+        else {
+            this->LineColumn++;
         }
 
-        default: {
-            if(isalpha(Current) || Current == '_') {
-                std::string Temp (1, Current);
+        return Current;
+    }
 
-                while((Current = getChar(Stream)) && (isalnum(Current) || Current == '_')) {
-                    Temp += Current;
+    void LexicalAnalyzer::putBack(char Current) {
+        --LineColumn != 0 ? this->Stream->putback(Current) : this->Stream->putback(Current), this->LineNumber--;
+    }
+
+    LexicalAnalyzer::LexicalAnalyzer(std::istream *stream)
+        : Stream(stream) {
+    }
+
+    LexicalAnalyzer::~LexicalAnalyzer() {
+    }
+
+    Token::Lexeme LexicalAnalyzer::getLexeme() {
+        static char Current = 0;
+
+        do {
+            Current = this->getChar();
+        } while(isspace(Current));
+
+        switch(Current) {
+            case '=': return (this->Stream->peek() == '=' ? this->getChar(), this->CachedValue = Token::Equals            : this->CachedValue = Token::Assign);
+            case '!': return (this->Stream->peek() == '=' ? this->getChar(), this->CachedValue = Token::NotEquals         : this->CachedValue = Token::Not);
+            case '<': return (this->Stream->peek() == '=' ? this->getChar(), this->CachedValue = Token::LesserThanEquals  : this->CachedValue = Token::LesserThan);
+            case '>': return (this->Stream->peek() == '=' ? this->getChar(), this->CachedValue = Token::GreaterThanEquals : this->CachedValue = Token::GreaterThan);
+
+            case '(': case '[': case '{': case ')':
+            case ']': case '}': case '+': case '-':
+            case '*': case '/': case ',': case ';':
+            case ':': case '.':
+                return this->CachedValue = Token::Lexeme(Current);
+
+            case '0' ... '9': {
+                std::string NumberStr;
+
+                do {
+                    NumberStr += Current;
+                } while(((Current = this->getChar()) == '.') || (isdigit(Current)));
+
+                this->putBack(Current);
+                this->NumberValue = stod(NumberStr);
+                return this->CachedValue = Token::Number;
+            }
+
+            case '\"': case '\'': {
+                char Start = Current;
+                StringValue = "";
+
+                do {
+                    StringValue += Current;
+                } while((Current = this->getChar()) && Current != Start);
+
+                this->StringValue += Current;
+                return this->CachedValue = Token::String;
+            }
+
+            default: {
+                if(isalpha(Current) || Current == '_') {
+                    std::string Temp (1, Current);
+
+                    while((Current = this->getChar()) && (isalnum(Current) || Current == '_')) {
+                        Temp += Current;
+                    }
+
+                    this->putBack(Current);
+
+                    if(Temp == "True" || Temp == "False") {
+                        this->BoolValue = Temp;
+                        return this->CachedValue = Token::Boolean;
+                    }
+
+                    else if(util::isKeyword(Temp)) {
+                        this->KeywordValue = Temp;
+                        return this->CachedValue = Token::Keyword;
+                    }
+
+                    this->NameValue = Temp;
+                    return this->CachedValue = Token::Name;
                 }
-
-                Stream->putback(Current);
-
-                if(Temp == "True" || Temp == "False") {
-                    BoolValue = Temp;
-                    return Token::Boolean;
-                }
-
-                else if(util::isKeyword(Temp)) {
-                    KeywordValue = Temp;
-                    return Token::Keyword;
-                }
-
-                NameValue = Temp;
-                return Token::Name;
             }
         }
     }
-}
 
-char getChar(std::istream *Stream) {
-    char Current = Stream->get();
-
-    if(Current == '\n' || Current == '\r') {
-        LineColumn = 0;
-        LineNumber++;
+    std::string LexicalAnalyzer::getName() const {
+        return this->NameValue;
     }
 
-    else {
-        LineColumn++;
+    std::string LexicalAnalyzer::getKeyword() const {
+        return this->KeywordValue;
     }
 
-    return Current;
+    std::string LexicalAnalyzer::getString() const {
+        return this->StringValue;
+    }
+
+    std::string LexicalAnalyzer::getBool() const {
+        return this->BoolValue;
+    }
+
+    double LexicalAnalyzer::getNumber() const {
+        return this->NumberValue;
+    }
+
+    std::tuple<int, int> LexicalAnalyzer::getLocation() const {
+        return std::make_tuple(this->LineNumber, this->LineColumn);
+    }
+
+    Token::Lexeme LexicalAnalyzer::flushCache() const {
+        return this->CachedValue;
+    }
+
+    LexicalAnalyzer::operator bool() const {
+        return this->Stream->good();
+    }
 }
 
-#include <iostream>
+std::ostream& operator<<(std::ostream& Out, LexicalAnalyzer::LexicalAnalyzer &Lexer) {
+    static bool Shown = false;
 
-void lex_debug() {
-    std::cout<<"Name Value: "<< NameValue << std::endl
-             <<"Keyword Value: "<< KeywordValue << std::endl
-             <<"String Value: "<< StringValue << std::endl
-             <<"Bool Value: "<< BoolValue << std::endl
-             <<"Number Value: "<< NumberValue << std::endl
-             <<"Line Number/Column: "<< LineNumber <<"/"<< LineColumn << std::endl
-             <<"--------------------------------------------------------------------------------"<< std::endl;
+    if(!Shown) {
+        Out<<"(Token Type, Token Name, Line Number, Line Column)\n"
+           <<"--------------------------------------------------\n";
+        Shown = true;
+    }
+
+    Out<<"("<< Lexer.flushCache() <<", "<< Lexer.getName() <<", "<< std::get<0>(Lexer.getLocation()) <<", "<< std::get<1>(Lexer.getLocation()) <<")";
 }

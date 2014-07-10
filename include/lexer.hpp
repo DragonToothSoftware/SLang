@@ -2,6 +2,9 @@
 #define _ROOT_INCLUDE_LEXER_HPP
 
 #include <istream>
+#include <ostream>
+#include  <string>
+#include   <tuple>
 
 namespace Token {
     enum Lexeme {
@@ -14,7 +17,43 @@ namespace Token {
     };
 }
 
-Token::Lexeme getToken(std::istream*);
-void lex_debug();
+namespace LexicalAnalyzer {
+    class LexicalAnalyzer {
+        private:
+            std  ::istream *Stream;
+            std  ::string   NameValue    = "",
+                            KeywordValue = "",
+                            StringValue  = "",
+                            BoolValue    = "";
+                   double   NumberValue  = 0.0;
+                   long     LineNumber   = 0,
+                            LineColumn   = 0;
+            Token::Lexeme   CachedValue  = Token::Start;
+
+            char getChar();
+            void putBack(char);
+
+        public:
+             LexicalAnalyzer(std::istream*);
+            ~LexicalAnalyzer();
+
+            Token::Lexeme          getLexeme  ();
+            std  ::string          getName    () const;
+            std  ::string          getKeyword () const;
+            std  ::string          getString  () const;
+            std  ::string          getBool    () const;
+                   double          getNumber  () const;
+            std  ::tuple<int, int> getLocation() const;
+            Token::Lexeme          flushCache () const;
+
+            operator bool() const;
+    };
+
+    typedef LexicalAnalyzer lexer;
+}
+
+std::ostream& operator<<(std::ostream&, const LexicalAnalyzer::LexicalAnalyzer&);
+
+namespace lexer = LexicalAnalyzer;
 
 #endif

@@ -5,6 +5,7 @@
 #include   <string>
 
 #include <lexer.hpp>
+#include  <util.hpp>
 
 int main(int argc, char *argv[]) {
     std::istream *Stream;
@@ -30,11 +31,15 @@ int main(int argc, char *argv[]) {
             return 0;
     }
 
+    lexer::lexer Lexer(Stream);
+
     Token::Lexeme CurrentToken = Token::Start;
 
-    while(*Stream) {
-        CurrentToken = getToken(Stream);
-        lex_debug();
+    while(Lexer) {
+        CurrentToken = Lexer.getLexeme();
+        std::cout<< Lexer << std::endl;
+        util::upause();
+        util::uclear();
     }
 
     if(Stream != &std::cin) {
