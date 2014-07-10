@@ -31,16 +31,17 @@ namespace LexicalAnalyzer {
     LexicalAnalyzer::LexicalAnalyzer(int Argc, char *Argv[]) {
         switch(Argc) {
             case 1:
-                Stream = &std::cin;
+                this->Stream      = &std::cin;
+                this->NeedsPrompt = true;
                 break;
 
             case 2:
-                Stream = new std::ifstream(Argv[1]);
+                this->Stream = new std::ifstream(Argv[1]);
                 break;
 
             case 3:
                 if(strcmp(Argv[1], "-c") == 0) {
-                    Stream = new std::istringstream(Argv[2]);
+                    this->Stream = new std::istringstream(Argv[2]);
                 }
 
                 break;
@@ -56,6 +57,10 @@ namespace LexicalAnalyzer {
 
     Token::Lexeme LexicalAnalyzer::getLexeme() {
         static char Current = 0;
+
+        if(NeedsPrompt) {
+            std::cout<<"$> ";
+        }
 
         do {
             Current = this->getChar();
@@ -157,6 +162,6 @@ namespace LexicalAnalyzer {
     }
 }
 
-std::ostream& operator<<(std::ostream& Out, LexicalAnalyzer::LexicalAnalyzer &Lexer) {
-    Out<<"("<< Lexer.flushCache() <<", "<< Lexer.getName() <<", "<< std::get<0>(Lexer.getLocation()) <<", "<< std::get<1>(Lexer.getLocation()) <<")";
+std::ostream& operator<<(std::ostream& Out, const LexicalAnalyzer::LexicalAnalyzer &Lexer) {
+    return Out<<"("<< Lexer.flushCache() <<", "<< Lexer.getName() <<", "<< std::get<0>(Lexer.getLocation()) <<", "<< std::get<1>(Lexer.getLocation()) <<")";
 }

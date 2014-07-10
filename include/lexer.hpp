@@ -29,6 +29,7 @@ namespace LexicalAnalyzer {
                    long     LineNumber   = 0,
                             LineColumn   = 0;
             Token::Lexeme   CachedValue  = Token::Start;
+                   bool     NeedsPrompt  = false;
 
             char getChar();
             void putBack(char);
@@ -52,7 +53,7 @@ namespace LexicalAnalyzer {
     typedef LexicalAnalyzer lexer;
 }
 
-std::ostream& operator<<(std::ostream&, LexicalAnalyzer::LexicalAnalyzer&);
+std::ostream& operator<<(std::ostream&, const LexicalAnalyzer::LexicalAnalyzer&);
 
 namespace lexer = LexicalAnalyzer;
 
