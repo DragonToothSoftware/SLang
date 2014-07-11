@@ -78,7 +78,9 @@ namespace LexicalAnalyzer {
             case ':': case '.':
                 return this->CachedValue = Token::Lexeme(Current);
 
-            case '0' ... '9': {
+            case '0': case '1': case '2': case '3':
+            case '4': case '5': case '6': case '7':
+            case '8': case '9': {
                 std::string NumberStr;
 
                 do {
@@ -161,7 +163,48 @@ namespace LexicalAnalyzer {
         return this->Stream->good();
     }
 }
+/*
+        Plus = '+', Minus = '-', Mult = '*', Div = '/', Assign = '=',
+        Comma = ',', End = ';', Colon = ':', Dot = '.',
+*/
+std::ostream& operator<<(std::ostream &Out, const Token::Lexeme &Current) {
+    return Out << [&Current] () -> std::string {
+                    switch(Current) {
+                        case Token::Start:             return "Start Symbol";
+                        case Token::Eof:               return "End of File";
+                        case Token::Name:              return "Identifier";
+                        case Token::Keyword:           return "Keyword";
+                        case Token::String:            return "String";
+                        case Token::Boolean:           return "Boolean";
+                        case Token::Number:            return "Number";
+                        case Token::LParen:            return "Left Paren";
+                        case Token::LBrace:            return "Left Brace";
+                        case Token::LBracket:          return "Left Bracket";
+                        case Token::RParen:            return "Right Paren";
+                        case Token::RBrace:            return "Right Brace";
+                        case Token::RBracket:          return "Right Bracket";
+                        case Token::Not:               return "Not";
+                        case Token::Equals:            return "Equals";
+                        case Token::NotEquals:         return "Not Equals";
+                        case Token::GreaterThan:       return "Greater Than";
+                        case Token::LesserThan:        return "Lesser Than";
+                        case Token::GreaterThanEquals: return "Greater Than Equals";
+                        case Token::LesserThanEquals:  return "Lesser Than Equals";
+                        case Token::Plus:              return "Plus";
+                        case Token::Minus:             return "Minus";
+                        case Token::Mult:              return "Multiplication";
+                        case Token::Div:               return "Division";
+                        case Token::Assign:            return "Assignment";
+                        case Token::Comma:             return "Comma";
+                        case Token::End:               return "End of Statement";
+                        case Token::Colon:             return "Colon";
+                        case Token::Dot:               return "Dot";
+                    }
+                  }();
+}
 
-std::ostream& operator<<(std::ostream& Out, const LexicalAnalyzer::LexicalAnalyzer &Lexer) {
-    return Out<<"("<< Lexer.flushCache() <<", "<< Lexer.getName() <<", "<< std::get<0>(Lexer.getLocation()) <<", "<< std::get<1>(Lexer.getLocation()) <<")";
+std::ostream& operator<<(std::ostream &Out, const LexicalAnalyzer::LexicalAnalyzer &Lexer) {
+    return Out<<"("<< Lexer.flushCache() <<", "<< std::get<0>(Lexer.getLocation()) <<", "<< std::get<1>(Lexer.getLocation()) <<")"
+              <<"\nCurrent Name: "<< Lexer.getName() <<"\nCurrent Keyword: "<< Lexer.getKeyword() <<"\nCurrent String:"
+              << Lexer.getString() <<"\nCurrent Boolean: "<< Lexer.getBool() <<"\nCurrent Number: "<< Lexer.getNumber();
 }
