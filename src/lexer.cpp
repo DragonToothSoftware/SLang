@@ -67,6 +67,20 @@ namespace LexicalAnalyzer {
         } while(isspace(Current));
 
         switch(Current) {
+            case '/':
+                if(this->Stream->peek() != '*') {
+                    return this->CachedValue = Token::Lexeme(Current);
+                }
+
+                while(true) {
+                    Current = this->getChar();
+
+                    if(Current == '*' && this->Stream->peek() == '/') {
+                        this->getChar();
+                        return this->getLexeme();
+                    }
+                }
+
             case '=': return (this->Stream->peek() == '=' ? this->getChar(), this->CachedValue = Token::Equals            : this->CachedValue = Token::Assign);
             case '!': return (this->Stream->peek() == '=' ? this->getChar(), this->CachedValue = Token::NotEquals         : this->CachedValue = Token::Not);
             case '<': return (this->Stream->peek() == '=' ? this->getChar(), this->CachedValue = Token::LesserThanEquals  : this->CachedValue = Token::LesserThan);
@@ -74,8 +88,8 @@ namespace LexicalAnalyzer {
 
             case '(': case '[': case '{': case ')':
             case ']': case '}': case '+': case '-':
-            case '*': case '/': case ',': case ';':
-            case ':': case '.':
+            case '*': case ',': case ';': case ':':
+            case '.':
                 return this->CachedValue = Token::Lexeme(Current);
 
             case '0': case '1': case '2': case '3':
